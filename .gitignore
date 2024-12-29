@@ -3,6 +3,6 @@
 __pycache__/
 HomeworkList/
 Homework/
-log.txt/
+log.txt
 test_main.py
 test.py
