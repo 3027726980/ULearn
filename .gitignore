@@ -1,0 +1,8 @@
+*.json
+.idea/
+__pycache__/
+HomeworkList/
+Homework/
+log.txt/
+test_main.py
+test.py
