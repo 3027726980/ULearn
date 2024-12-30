@@ -433,7 +433,7 @@ def getCoursesIbjList(coursesDict):
     return coursesIdList
 
 # 保存作业列表到HomeworkList文件夹
-def saveCourseHomeworkList(AUTHORIZATION, courseId, name, folder = 'Homework'):
+def saveCourseHomeworkList(AUTHORIZATION, courseId, name, folder = 'HomeworkList'):
     """
     保存课程作业列表
 
@@ -443,7 +443,7 @@ def saveCourseHomeworkList(AUTHORIZATION, courseId, name, folder = 'Homework'):
     - AUTHORIZATION: 请求的授权信息
     - ocId: 课程ID
     - name: 课程名称
-    - folder: 保存作业列表的文件夹名称，默认为'Homework'
+    - folder: 保存作业列表的文件夹名称，默认为'HomeworkList'
     """
     # 设置请求头，包含授权信息和其他元数据
     headers = {

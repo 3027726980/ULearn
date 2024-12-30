@@ -3,13 +3,22 @@ from function import *
 
 
 def main():
-    loginName = input("请输入你的登录名：")
-    password = input("请输入你的密码：")
-    # loginName = "13500034933"
-    # password = "Yxy123456"
-    #账户密码错误退出程序
-    if not checkLoginData(loginName,password):
-        print("程序结束")
+    max_attempts = 3
+    attempts = 0
+
+    while attempts < max_attempts:
+        loginName = input("请输入你的登录名：")
+        password = input("请输入你的密码：")
+
+        if checkLoginData(loginName, password):
+            print("登录成功")
+            break
+        else:
+            attempts += 1
+            print(f"账户密码错误，剩余尝试次数：{max_attempts - attempts}")
+
+    if attempts == max_attempts:
+        print("尝试次数过多，程序结束")
     # 传入登录名和密码获取并保存cookies
     saveCookies(loginName, password)
     
@@ -45,13 +54,12 @@ def main():
     # 获取课程id列表
     coursesIdList = getCoursesIbjList(coursesObjDict)
     for courseId in coursesIdList:
-        print(f"\n课程id:{courseId}")
+        print(f"\n课程名称:{coursesObjDict[f'course_{courseId}'].name}")
         # 获取作业id列表
         homeworkIdList = getHomeworkIdList(courseId)
         print(homeworkIdList)
         if homeworkIdList:
             for homeworkId in homeworkIdList:
-                print(f"作业id:{homeworkId}")
                 printHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId)
         else:
             print("该课程没有作业")
