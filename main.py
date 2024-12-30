@@ -1,17 +1,14 @@
 import json
 from function import *
-
-
 def main():
-    max_attempts = 3
-    attempts = 0
+    max_attempts = 3 # 尝试登录的最大次数
+    attempts = 0 # 当前尝试次数
 
     while attempts < max_attempts:
         loginName = input("请输入你的登录名：")
         password = input("请输入你的密码：")
 
         if checkLoginData(loginName, password):
-            print("登录成功")
             break
         else:
             attempts += 1
@@ -57,12 +54,12 @@ def main():
         print(f"\n课程名称:{coursesObjDict[f'course_{courseId}'].name}")
         # 获取作业id列表
         homeworkIdList = getHomeworkIdList(courseId)
-        print(homeworkIdList)
-        if homeworkIdList:
-            for homeworkId in homeworkIdList:
-                printHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId)
-        else:
-            print("该课程没有作业")
+        for homeworkId in homeworkIdList:
+            if homeworkId:
+                saveHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId)
+                print_homework_information(courseId,homeworkId)
+            else:
+                print("该课程没有作业")
 
 if __name__ == '__main__':
     main()

@@ -14,7 +14,9 @@ import os,time,requests,json
 
 # 定义一个空列表用于存储Cookies
 cookiesList = []
-#检查用户密码是否正确
+
+
+# 检查登录信息
 def checkLoginData(loginName, password):
     """
     检查登录信息的函数。
@@ -35,6 +37,7 @@ def checkLoginData(loginName, password):
     }
 
     try:
+        # 打印登录名和密码，以便用户确认
         print(f'账户:{loginName}')
         print(f'密码:{password}')
         print('正在检查登录信息...')
@@ -57,7 +60,8 @@ def checkLoginData(loginName, password):
         # 请求超时时打印错误信息并返回错误代码2
         print('请求超时请检查网络链接')
 
-# 以列表形式返回Cookies
+
+# 保存cookies
 def saveCookies(loginName,password):
     """
     通过 Selenium 使用 Chrome 浏览器自动化登录过程，以获取登录后的 cookies。
@@ -137,7 +141,9 @@ def saveCookies(loginName,password):
         print("超时：指定的cookie未在预期时间内设置")
         driver.quit()
 
-# 读取cookiesList,返回以cookies的name为键,value为键值的字典
+
+
+# 获取cookies
 def getCookies():
     """
     将返回的Cookies处理成字典格式，可以直接作为requests的cookies携带。
@@ -158,7 +164,8 @@ def getCookies():
     # 返回处理后的Cookies字典
     return cookies
 
-# 传入 loginName,password 返回以cookies的name为键,其余属性为键值对组成的字典
+
+# 获取cookies详细信息
 def getCookiesDetail(cookiesList):
     """
     将返回的Cookies处理成字典格式详细信息，方便后续操作和管理。
@@ -177,6 +184,8 @@ def getCookiesDetail(cookiesList):
         cookies_details_dict[i.get('name')] = i
     return cookies_details_dict
 
+
+
 # 将cookies保存为JSON格式
 def saveCookiesJSON(cookiesList):
     """
@@ -190,17 +199,26 @@ def saveCookiesJSON(cookiesList):
     """
 
     # 将 cookies 列表转换为字典格式，以 cookie 的 'name' 属性作为键
+    # 这样做可以确保每个 cookie 的唯一性，并便于后续处理
     cookies_dict = {cookie['name']: cookie for cookie in cookiesList}
 
     # 定义保存 cookies 的文件路径
+    # 文件名固定为 'cookies.json'，用于存储转换后的 JSON 数据
     file_path = 'cookies.json'
 
     # 写入 JSON 数据到文件
+    # 使用 'w' 模式打开文件，准备写入
+    # encoding='utf-8' 确保文件以 UTF-8 编码方式写入，支持多语言字符
     with open(file_path, 'w', encoding='utf-8') as f:
+        # 使用 json.dump 将 Python 对象序列化为 JSON 格式并写入文件
+        # ensure_ascii=False 确保非 ASCII 字符能够正确写入
+        # indent=4 设置 JSON 数据的缩进格式，提高可读性
         json.dump(cookies_dict, f, ensure_ascii=False, indent=4)
+        # 打印消息，确认 cookies 已成功保存
         print("Cookies已保存")
 
-#字符串Unicode解码
+
+# 字符串Unicode解码
 def decodeUnicode(inputStr):
     """
     解码包含 '%u' Unicode 转义序列的字符串。
@@ -221,7 +239,8 @@ def decodeUnicode(inputStr):
     decodedString = escapedString.encode('utf-8').decode('unicode_escape')
     return decodedString
 
-#字符串URL解码
+
+# 字符串URL解码
 def decodeURL(inputStr):
     """
     解码URL中的查询字符串。
@@ -240,7 +259,8 @@ def decodeURL(inputStr):
     decodedQuery = unquote_plus(inputStr)
     return decodedQuery
 
-# 通过cookies获取个人信息并保存
+
+# 保存USERINFO
 def saveUSERINFO():
     """
     从cookies文件中获取用户信息，并将其解码后保存到userinfo.json文件中。
@@ -272,11 +292,9 @@ def saveUSERINFO():
         
         # 将用户信息字典写入文件，确保ASCII字符正确显示，并格式化输出
         json.dump(data_dict,w,ensure_ascii=False,indent=4)
-        
-        # 打印处理后的用户信息字典，移除任何反斜杠字符
-        # print(json.dumps(data_dict,ensure_ascii=False,indent=4).replace('\\',''))
 
-#返回字典userinfo
+
+# 获取保存的用户信息
 def getUSERINFO():
     """
     读取并返回用户信息。
@@ -291,6 +309,8 @@ def getUSERINFO():
     with open('userinfo.json','r',encoding='utf-8') as f:
         userinfo = json.load(f)
         return userinfo
+
+
 
 # 获取保存课程列表
 def saveCoursesList(AUTHORIZATION):
@@ -347,6 +367,7 @@ def saveCoursesList(AUTHORIZATION):
 
     # 返回格式化后的JSON字符串
     return json.dumps(response.json(), indent=4, sort_keys=True, ensure_ascii=False)
+
 
 # 读取课程列表JSON返回课程对象字典
 def getCoursesObjDict():
@@ -425,12 +446,14 @@ def getCoursesObjDict():
     # 返回包含所有课程对象的字典
     return coursesObjDict
 
+
 #获取课程id列表
 def getCoursesIbjList(coursesDict):
     coursesIdList = []
     for course in coursesDict.values():
         coursesIdList.append(course.id)
     return coursesIdList
+
 
 # 保存作业列表到HomeworkList文件夹
 def saveCourseHomeworkList(AUTHORIZATION, courseId, name, folder = 'HomeworkList'):
@@ -480,7 +503,6 @@ def saveCourseHomeworkList(AUTHORIZATION, courseId, name, folder = 'HomeworkList
 
     # 定义要写入的文件名和完整路径
     file_name = f"{courseId}_Homework.json"
-    file_path = target_folder / file_name
 
     # 发送GET请求获取作业列表数据
     response = requests.get('https://courseapi.ulearning.cn/homeworks/student/v2', params=params, headers=headers)
@@ -505,6 +527,7 @@ def saveCourseHomeworkList(AUTHORIZATION, courseId, name, folder = 'HomeworkList
 
     # 打印保存成功的消息
     print(f'\t{name} 作业列表已保存到course_id : {courseId}_HomeworkList.json')
+
 
 # 获取作业列表对象字典
 def getHomeworkListObjDict(courseId):
@@ -591,6 +614,7 @@ def getHomeworkListObjDict(courseId):
     # 返回包含所有作业对象的字典
     return HomeworkListObjDict
 
+
 # 获取作业列表ID列表
 def getHomeworkIdList(courseId):
     HomeworkListObjDict = getHomeworkListObjDict(courseId)
@@ -600,12 +624,14 @@ def getHomeworkIdList(courseId):
         homeworkIdList.append(homework.id)
     return homeworkIdList
 
+
 # 格式化时间戳
 def format_timestamp_ms(timestamp_ms, format_str='%Y年%m月%d日%H小时'):
     # 将13位时间戳转换为秒级别，并去掉小数部分
     timestamp_s = timestamp_ms / 1000.0
     dt = datetime.fromtimestamp(timestamp_s)
     return dt.strftime(format_str)
+
 
 # 计算剩余时间
 def format_remaining_time(start_ms, end_ms, format_str='{days}天{hours}小时{minutes}分钟{seconds}秒'):
@@ -635,17 +661,17 @@ def format_remaining_time(start_ms, end_ms, format_str='{days}天{hours}小时{m
 
     return formatted_time
 
-# 获取并打印作业详细内容
-def printHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId):
-    """
-    根据作业ID、用户ID和课程ID获取作业详细信息，并打印出来。
 
-    参数:
-    AUTHORIZATION (str): 认证信息。
-    homeworkId (str): 作业ID。
-    userId (str): 用户ID。
-    courseId (str): 课程ID。
+# 获取作业详情并保存
+def saveHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId):
     """
+    参数:
+    AUTHORIZATION: 用户授权信息
+    homeworkId: 作业ID
+    userId: 用户ID
+    courseId: 课程ID
+    """
+    # 设置请求头，包含授权信息和其他元数据
     headers = {
         'AUTHORIZATION': AUTHORIZATION,
         'Accept': 'application/json, text/plain, */*',
@@ -662,13 +688,49 @@ def printHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId):
         'sec-ch-ua-platform': '"Windows"',
     }
 
+    # 构造请求URL
     url = f'https://homeworkapi.ulearning.cn/stuHomework/homeworkDetail/{homeworkId}/{userId}/{courseId}'
 
+    # 发起GET请求，获取作业详情
     response = requests.get(url=url, headers=headers)
-    tmp = response.json()
-
+    # 将响应数据解析为JSON格式
     # 假设 json_data 是你的 JSON 字符串
     data = json.loads(json.dumps(response.json(), indent=4, sort_keys=True, ensure_ascii=False))
+
+    # 获取当前脚本所在的目录
+    project_root = Path(__file__).parent  # 当前脚本所在的目录
+    # 定义目标文件夹 'HomeworkDetail'
+    target_folder = project_root / 'HomeworkDetail'
+    # 创建 'HomeworkDetail' 文件夹，如果它不存在
+    target_folder.mkdir(parents=True, exist_ok=True)
+
+    # 定义保存文件的路径和名称
+    savePath = f'HomeworkDetail/{courseId}_{homeworkId}_Detail.json'
+    # 将解析后的数据保存到文件中
+    with open(savePath, 'w', encoding='utf-8') as f:
+        f.write(json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False))
+        # 打印保存成功的消息
+        print(f'{courseId}_{homeworkId}保存成功：{savePath}')
+
+
+# 提取作业信息
+def extractHomeworkInformation(courseId, homeworkId):
+    """
+    提取作业信息。
+
+    根据课程ID和作业ID从JSON文件中提取相关信息，包括学生信息、作业详情、教师上传的文件和学生提交的文件。
+
+    参数:
+    courseId (str): 课程ID。
+    homeworkId (str): 作业ID。
+
+    返回:
+    dict: 包含作业相关信息的字典。
+    """
+
+    # 读取JSON文件
+    with open(f'HomeworkDetail/{courseId}_{homeworkId}_Detail.json', 'r', encoding='utf-8') as f:
+        data = json.loads(f.read())
 
     # 提取学生信息
     student_name = data['result']['user']['name']
@@ -678,9 +740,10 @@ def printHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId):
     homework_title = data['result']['activityHomework']['homeworkTitle']
     homework_grade = data['result']['activityHomework']['grade']
     homework_request = data['result']['activityHomework']['homeworkRequest'].strip('<p>').strip('</p>')  # 移除HTML标签
-    homework_startTime  = format_timestamp_ms(data['result']['activityHomework']['startTime'])
+    homework_startTime = format_timestamp_ms(data['result']['activityHomework']['startTime'])
     homework_endTime = format_timestamp_ms(data['result']['activityHomework']['endTime'])
-    homework_remainingTime = format_remaining_time(data['result']['activityHomework']['startTime'], data['result']['activityHomework']['endTime'])
+    homework_remainingTime = format_remaining_time(data['result']['activityHomework']['startTime'],
+                                                   data['result']['activityHomework']['endTime'])
 
     # 提取教师上传文件信息（如果有）
     teacher_file_uploads = []
@@ -705,9 +768,50 @@ def printHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId):
                     'filePath': file_info.get('filePath')
                 })
 
+    # 创建一个字典，包含所有信息
+    information = {
+        'student_name': student_name,
+        'student_email': student_email,
+        'homework_title': homework_title,
+        'homework_grade': homework_grade,
+        'homework_request': homework_request,
+        'homework_startTime': homework_startTime,
+        'homework_endTime': homework_endTime,
+        'homework_remainingTime': homework_remainingTime,
+        'teacher_file_uploads': teacher_file_uploads,
+    }
+    return information
+
+
+# 打印作业信息
+def print_homework_information(courseId,homeworkId):
+
+    # 从指定课程和作业中提取作业信息
+    information = extractHomeworkInformation(courseId,homeworkId)
+
+    # 提取学生姓名
+    student_name = information.get('student_name')
+    # 提取学生邮箱
+    student_email = information.get('student_email')
+    # 提取作业标题
+    homework_title = information.get('homework_title')
+    # 提取作业分数
+    homework_grade = information.get('homework_grade')
+    # 提取作业要求
+    homework_request = information.get('homework_request')
+    # 提取作业开始时间
+    homework_startTime = information.get('homework_startTime')
+    # 提取作业结束时间
+    homework_endTime = information.get('homework_endTime')
+    # 提取作业剩余时间
+    homework_remainingTime = information.get('homework_remainingTime')
+    # 提取教师上传的文件信息
+    teacher_file_uploads = information.get('teacher_file_uploads')
+    # 提取学生提交的文件信息
+    student_submission_files = information.get('student_submission_files')
+
     # 输出提取的数据
     print("\n作业详细信息:")
-    print(f"作业ID: {homeworkId}")
     print(f"学生姓名: {student_name}")
     print(f"学生邮箱: {student_email}")
     print(f"作业标题: {homework_title}")
@@ -717,13 +821,20 @@ def printHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId):
     print(f"总分: {homework_grade}")
     print(f"作业要求: {homework_request}")
 
+    # 判断是否有教师上传的文件
     if teacher_file_uploads:
         print("教师上传的文件:")
         for file_info in teacher_file_uploads:
             print(
                 f"文件名: {file_info['fileName']}, 文件大小: {file_info['fileSize']} bytes, 文件路径: {file_info['filePath']}")
+    else:
+        print("无教师上传的文件")
 
+    # 判断是否有学生提交的文件
     if student_submission_files:
         print("\n学生提交的文件:")
         for file_info in student_submission_files:
-            print(f"文件名: {file_info['fileName']}, 文件大小: {file_info['fileSize']} bytes, 文件路径: {file_info['filePath']}")
+            print(
+                f"文件名: {file_info['fileName']}, 文件大小: {file_info['fileSize']} bytes, 文件路径: {file_info['filePath']}")
+    else:
+        print("无学生提交的文件")
