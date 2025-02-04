@@ -15,13 +15,13 @@ def format_remaining_time(start_ms, end_ms, format_str='{days}天{hours}小时{m
     start_s = start_ms / 1000
     end_s = end_ms / 1000
 
+
     # 计算当前时间和结束时间之间的时间差
     current_time_s = datetime.now().timestamp()
     remaining_time_delta = timedelta(seconds=end_s - current_time_s)
 
     if remaining_time_delta.total_seconds() <= 0:
         return "已过期"
-
     # 分解时间差
     days, remainder = divmod(remaining_time_delta.total_seconds(), 86400)  # 一天有86400秒
     hours, remainder = divmod(remainder, 3600)  # 一小时有3600秒
@@ -36,7 +36,6 @@ def format_remaining_time(start_ms, end_ms, format_str='{days}天{hours}小时{m
     )
 
     return formatted_time
-
 # 字符串Unicode解码
 def decodeUnicode(inputStr):
     """
@@ -161,8 +160,8 @@ def getCoursesIbjList(coursesDict):
     for course in coursesDict.values():
         coursesIdList.append(course.id)
     return coursesIdList
-
 # 获取作业列表的字典对象
+
 def getHomeworkListObjDict(courseId):
     """
     根据课程ID获取作业列表的字典对象。

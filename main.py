@@ -92,8 +92,6 @@ def login():
                 # 保存作业详情
                 saveHomeworkDetail(AUTHORIZATION, homeworkId, userId, courseId)
 
-
-
 if __name__ == '__main__':
     model = input('是否联网查询(y/n): ')
     if model == 'y':
