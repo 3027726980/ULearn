@@ -4,5 +4,7 @@ __pycache__/
 HomeworkList/
 Homework/
 log.txt
-test_main.py
-test.py
+test*
+userinfo.json
+*.zip
+chromedriver-win64/
